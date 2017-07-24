@@ -20,9 +20,18 @@ namespace Manualfac
              * The lifetime scope will track lifetime for instances created.
              */
 
-            if (service == null) { throw new ArgumentNullException(nameof(service)); }
+            if (IsDisposed)
+            {
+                throw new ObjectDisposedException(GetType().Name);
+            }
+            if (service == null)
+            {
+                throw new ArgumentNullException(nameof(service));
+            }
             ComponentRegistration componentRegistration = GetComponentRegistration(service);
-            return componentRegistration.Activator.Activate(this);
+            var resolveComponent = componentRegistration.Activator.Activate(this);
+            disposer.AddItemsToDispose(resolveComponent);
+            return resolveComponent;
 
             #endregion
         }
@@ -36,8 +45,7 @@ namespace Manualfac
              * component registry.
              */
 
-            throw new NotImplementedException();
-
+            return new LifetimeScope(componentRegistry);
             #endregion
         }
 
