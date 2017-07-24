@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Manualfac
 {
@@ -10,14 +11,20 @@ namespace Manualfac
          * The disposer is used for disposing all disposable items added when it is disposed.
          */
 
+        private readonly List<Disposable> disposables = new List<Disposable>();
+
         public void AddItemsToDispose(object item)
         {
-            throw new NotImplementedException();
+            var disposable = item as Disposable;
+            if (disposable != null)
+            {
+                disposables.Add(disposable);
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
-            throw new NotImplementedException();
+            disposables.ForEach(d => d.Dispose());
         }
 
         #endregion
