@@ -27,8 +27,26 @@ namespace Manualfac.Sources
              * generic type of genericService. If it is matched, then an concrete component
              * registration needed wll be invoked.
              */
-            throw new NotImplementedException();
+            var serviceWithType = service as IServiceWithType;
+            if (serviceWithType == null)
+            {
+                return null;
+            }
 
+            var resolutionType = serviceWithType.ServiceType;
+            if (!resolutionType.IsConstructedGenericType || !resolutionType.IsGenericType)
+            {
+                return null;
+            }
+
+            var openGenericService = serviceWithType.ChangeType(resolutionType.GetGenericTypeDefinition());
+            if (!openGenericService.Equals(genericService))
+            {
+                return null;
+            }
+
+            var genericArguments = resolutionType.GetGenericArguments();
+            return new ComponentRegistration(service, new ReflectiveActivator(implementorType.MakeGenericType(genericArguments)));
             #endregion
         }
     }
