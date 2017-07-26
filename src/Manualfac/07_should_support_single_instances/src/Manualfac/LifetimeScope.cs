@@ -24,9 +24,7 @@ namespace Manualfac
             this.componentRegistry = componentRegistry;
 
             #region Please initialize root scope
-
-            throw new NotImplementedException();
-
+            RootScope = parent;
             #endregion
         }
 
@@ -57,7 +55,30 @@ namespace Manualfac
 
             #region Please implement this method
 
-            throw new NotImplementedException();
+            object resolved;
+            switch (registration.Sharing)
+            {
+                case InstanceSharing.None:
+                    resolved = registration.Activator.Activate(this);
+                    Disposer.AddItemsToDispose(resolved);
+                    break;
+                case InstanceSharing.Shared:
+                    if (sharedInstances.ContainsKey(registration.Service))
+                    {
+                        resolved = sharedInstances[registration.Service];
+                    }
+                    else
+                    {
+                        resolved = registration.Activator.Activate(this);
+                        sharedInstances[registration.Service] = resolved;
+                        Disposer.AddItemsToDispose(resolved);
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return resolved;
 
             #endregion
         }
@@ -69,9 +90,7 @@ namespace Manualfac
             /*
              * Create a child life-time scope in this method.
              */
-
-            throw new NotImplementedException();
-
+            return new LifetimeScope(componentRegistry, this);
             #endregion
         }
 
@@ -83,9 +102,12 @@ namespace Manualfac
              * This method will try get component registration from component registry.
              * We extract this method for isolation of responsibility.
              */
-
-            throw new NotImplementedException();
-
+            ComponentRegistration registration;
+            if (!componentRegistry.TryGetRegistration(service, out registration))
+            {
+                throw new DependencyResolutionException($"Cannot find registration: {service}");
+            }
+            return registration;
             #endregion
         }
 

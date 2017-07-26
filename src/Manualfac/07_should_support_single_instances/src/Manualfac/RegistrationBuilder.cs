@@ -41,8 +41,9 @@ namespace Manualfac
              * Please create a single instance registration. Please refer to
              * InstancePerDependency as an example.
              */
-            throw new NotImplementedException();
-
+            Lifetime = new RootScopeLifetime();
+            Sharing = InstanceSharing.Shared;
+            return this;
             #endregion
         }
 
@@ -61,8 +62,10 @@ namespace Manualfac
              * Please create an instance per lifetime scope registration. Please refer to
              * InstancePerDependency as an example.
              */
-            throw new NotImplementedException();
 
+            Lifetime = new CurrentScopeLifetime();
+            Sharing = InstanceSharing.Shared;
+            return this;
             #endregion
         }
 
