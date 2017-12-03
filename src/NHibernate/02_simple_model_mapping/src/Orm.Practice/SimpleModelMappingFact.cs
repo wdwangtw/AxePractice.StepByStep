@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using FluentNHibernate.Automapping;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
@@ -58,7 +59,11 @@ namespace Orm.Practice
              */
 
             return Fluently.Configure().Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
-                .Mappings(mcf => mcf.FluentMappings.AddFromAssembly(Assembly.GetExecutingAssembly()))
+                .Mappings(
+                    mcf =>
+                        mcf.AutoMappings.Add(AutoMap.Assembly(Assembly.GetExecutingAssembly(),
+                            new TypeSpecificMappingConfig())
+                            .UseOverridesFromAssembly(Assembly.GetExecutingAssembly())))
                 .BuildSessionFactory();
 
             #endregion
