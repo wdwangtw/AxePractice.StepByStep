@@ -52,7 +52,14 @@ namespace Orm.Practice
 
             #region Please modify the code to save a new child to an existing parent
 
-            throw new NotImplementedException();
+            insertedParent.Children.Add(new Child
+            {
+                Name = "nq-child-1-parent-1",
+                Parent = insertedParent
+            });
+
+            Session.Update(insertedParent);
+            Session.Flush();
 
             #endregion
 
@@ -78,15 +85,35 @@ namespace Orm.Practice
 
             Assert.False(Session.Query<Child>().Any(c => !c.IsForQuery));
         }
-        
+
+        [Fact]
+        public void should_delete_child_when_removed_from_parent()
+        {
+            SaveParentAndChildren(
+                "nq-parent-1",
+                new[] { "nq-child-1-parent-1", "nq-child-2-parent-1" });
+            Session.Clear();
+
+            Parent parent = Session.Query<Parent>().First(p => p.Name == "nq-parent-1");
+            Child child = parent.Children.Single(c => c.Name == "nq-child-1-parent-1");
+            parent.Children.Remove(child);
+            Session.Update(parent);
+            Session.Flush();
+            Session.Clear();
+
+            Assert.Equal(1, Session.Query<Child>().Count(p => !p.IsForQuery));
+        }
+
         void DeleteParentAndChild(string parentName)
         {
             #region Please implement this method
 
             // This method will delete parent with the spcified name. And children
             // associated with this parent will also be deleted.
+            Parent parent = Session.Query<Parent>().First(p => p.Name == parentName);
 
-            throw new NotImplementedException();
+            Session.Delete(parent);
+            Session.Flush();
 
             #endregion
         }
@@ -99,7 +126,19 @@ namespace Orm.Practice
             // with `childrenNames` should also be created and associated with
             // parent.
 
-            throw new NotImplementedException();
+            var parent = new Parent
+            {
+                Name = parentName,
+            };
+
+            parent.Children = childrenNames.Select(c => new Child
+            {
+                Name = c,
+                Parent = parent,
+            }).ToList();
+
+            Session.Save(parent);
+            Session.Flush();
 
             #endregion
         }
