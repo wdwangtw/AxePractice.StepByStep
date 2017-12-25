@@ -21,7 +21,7 @@ namespace Orm.Practice.Entities
         public ChildMap()
         {
             #region Please modify the code to pass the test
-            Id(c => c.ChildId);
+            Id(c => c.ChildId).GeneratedBy.Guid();
             Map(c => c.Name);
             Map(c => c.IsForQuery);
             References(c => c.Parent).Column("ParentID");

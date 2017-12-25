@@ -17,10 +17,10 @@ namespace Orm.Practice.Entities
         public ParentMap()
         {
             #region Please modify the code to pass the test
-            Id(p => p.ParentId);
+            Id(p => p.ParentId).GeneratedBy.Guid();
             Map(p => p.Name);
             Map(p => p.IsForQuery);
-            HasMany(p => p.Children);
+            HasMany(p => p.Children).Cascade.AllDeleteOrphan().Inverse();
 
             #endregion
         }
