@@ -17,8 +17,10 @@ namespace Orm.Practice.Entities
         public ParentMap()
         {
             #region Please modify the code to pass the test
-
-            throw new NotImplementedException();
+            Id(p => p.ParentId);
+            Map(p => p.Name);
+            Map(p => p.IsForQuery);
+            HasMany(p => p.Children);
 
             #endregion
         }
